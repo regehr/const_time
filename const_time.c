@@ -36,18 +36,20 @@ long op(long x, long y) { return x / y; }
 void measure(long x, long y) {
   int j;
   uint64_t times[MREPS];
+  uint64_t time;
   volatile long result;
   for (j = 0; j < MREPS; j++) {
-    uint64_t t1 = start();
+    volatile uint64_t t1 = start();
     int i;
-    for (i = 0; i < REPS; i++) {
+    for (i = t1 ^ t1; i < REPS; i++) {
       volatile long x_copy = x;
       volatile long y_copy = y;
       result = op(x_copy, y_copy);
     }
-    times[j] = stop() - t1;
+    volatile uint64_t t2 = result ^ stop();
+    times[j] = (t2 ^ result) - t1;
   }
-  printf("%ld %ld : ", x, y);
+  printf("%16lx %16lx : ", (unsigned long)x, (unsigned long)y);
   for (j = 0; j < MREPS; j++) {
     printf("%" PRIu64 " ", times[j]);
   }
@@ -68,12 +70,14 @@ int main(void) {
   srand(getpid() + time(0));
   int i;
   for (i = 0; i < 5; i++)
-    measure(rand8(), rand8());
+    measure(rand8(), 1 + rand8());
   for (i = 0; i < 5; i++)
     measure(rand64(), rand64());
   for (i = 0; i < 5; i++)
-    measure(rand64(), rand8());
+    measure(rand64(), 1 + rand8());
   for (i = 0; i < 5; i++)
     measure(rand8(), rand64());
+  for (i = 0; i < 5; i++)
+    measure(rand8() << 48, (rand8() + 1) << 48);
   return 0;
 }
