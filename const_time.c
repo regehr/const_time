@@ -54,8 +54,7 @@ void measure(long x, long y) {
   printf("\n");
 }
 
-uint64_t rand64(void)
-{
+uint64_t rand64(void) {
   uint64_t a = rand() & 0xffff;
   uint64_t b = rand() & 0xffff;
   uint64_t c = rand() & 0xffff;
@@ -63,21 +62,18 @@ uint64_t rand64(void)
   return (a << 48) | (b << 32) | (c << 16) | d;
 }
 
-uint64_t rand8(void)
-{
-  return rand() & 0xff;
-}
+uint64_t rand8(void) { return rand() & 0xff; }
 
 int main(void) {
-  srand(getpid()+time(0));
+  srand(getpid() + time(0));
   int i;
-  for (i=0; i<5; i++)
+  for (i = 0; i < 5; i++)
     measure(rand8(), rand8());
-  for (i=0; i<5; i++)
+  for (i = 0; i < 5; i++)
     measure(rand64(), rand64());
-  for (i=0; i<5; i++)
+  for (i = 0; i < 5; i++)
     measure(rand64(), rand8());
-  for (i=0; i<5; i++)
+  for (i = 0; i < 5; i++)
     measure(rand8(), rand64());
   return 0;
 }
